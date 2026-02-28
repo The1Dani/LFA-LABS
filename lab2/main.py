@@ -2,6 +2,34 @@ from __future__ import annotations
 import json
 import random
 
+GENERATE_GRAPHS = True
+if GENERATE_GRAPHS:
+  from graphviz import Digraph
+
+  def visualize_dfa(dfa_obj, name):
+      dot = Digraph(comment='DFA Visualization', name=name, directory="graphs")
+      dot.attr(rankdir='LR') # Left to Right layout
+  
+      # Add states
+      for q in dfa_obj.Q:
+          if q in dfa_obj.F:
+              dot.node(q, shape='doublecircle') # Final states
+          else:
+              dot.node(q, shape='circle')
+  
+      # Add invisible start node
+      dot.node('start', label='', shape='none')
+      dot.edge('start', dfa_obj.Q0)
+  
+      # Add transitions
+      for state, transitions in dfa_obj.DELTA.items():
+          for char, next_state in transitions.items():
+              if next_state != "FAIL":
+                  dot.edge(state, next_state, label=char)
+    
+      dot.render(format='png', cleanup=True)
+
+
 class Grammar:
     def __init__(self,
       VN:list[str],
@@ -144,15 +172,13 @@ class NFA:
         self.STATES = [self.Q0]
         
 
-    def _next(self, token):#Study
+    def _next(self, token):
       next_possible_states = set()
       for state in self.STATES:
           if state in self.DELTA and token in self.DELTA[state]:
-              # Add ALL reachable states from this state on char 'c'
               for target in self.DELTA[state][token]:
                   next_possible_states.add(target)
       
-      # In an NFA, the new configuration is the set of all reached states
       self.STATES = list(next_possible_states)
 
     def _isFinal(self):
@@ -187,7 +213,7 @@ class NFA:
                 return False
         return True
         
-    def toDFA(self) -> DFA:#@Study
+    def toDFA(self) -> DFA:
         # Use a sorted list to ensure the key is always identical for the same set
         start_set = frozenset([self.Q0])
         start_name = str(sorted(list(start_set)))
@@ -230,10 +256,6 @@ class NFA:
     def toGrammar(self) -> Grammar:
         VT = self.SIGMA
         q = self.Q[:]
-        try:
-          q.remove("Vf")
-        except Exception as e:
-          pass
         VN = q
         P = {}
         for state, transitions in self.DELTA.items():
@@ -251,8 +273,6 @@ class NFA:
 class DFA:
   STATE_FAIL = "FAIL"
 
-  
-
   def __init__(self, q:list[str],
               sigma:list[str],
               delta:dict[str, dict[str, str]],
@@ -265,13 +285,13 @@ class DFA:
     self.Q0: str = q0
     self.F: list[str] = f
     self.STATE = self.Q0
+    
   def _next(self, c: str) -> None:
     state = self.STATE
     if state in self.DELTA and c in self.DELTA[state]:
       self.STATE = self.DELTA[state][c]
     else:
       self.STATE = self.STATE_FAIL
-
 
   def _isFinal(self):
     return self.STATE in self.F
@@ -295,8 +315,6 @@ class DFA:
 
       self._reset()
       return False
-  
-
 
 def getAutomationsFromJson(automation_json) -> list[NFA]:
   res = []
@@ -383,7 +401,7 @@ if __name__ == "__main__":
   
   print()
   
-  for aut in automations:
+  for i, aut in enumerate(automations):
     grammar = aut.toGrammar()
     print(grammar.type())
     print(f"{aut.isDFA()=}")
@@ -395,3 +413,5 @@ if __name__ == "__main__":
       if not word_belongs:
         raise ValueError(f"Word {word} does not belong to the language")
     print(f"{word_belongs=}")
+    if GENERATE_GRAPHS:
+      visualize_dfa(automations[i].toDFA(), f"{i:02}")
