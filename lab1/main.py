@@ -1,6 +1,8 @@
+from __future__ import annotations
 import json
 import array
 import random
+
 
 class Grammar:
     def __init__(self, VN:list[str], VT: list[str], P: dict[str,list[str]]):
@@ -66,7 +68,7 @@ class FiniteAutomata:
                         
         self.Q: list[str] = q
         self.SIGMA: list[str] = sigma
-        self.DELTA: dict[str, dict[str, str]] = delta
+        self.DELTA: dict[str, dict[str, list[str]]] = delta
         self.Q0: str = q0
         self.F: list[str] = f
         self.STATES = [self.Q0]

@@ -2,7 +2,7 @@ from __future__ import annotations
 import json
 import random
 
-GENERATE_GRAPHS = True
+GENERATE_GRAPHS = False
 if GENERATE_GRAPHS:
   from graphviz import Digraph
 

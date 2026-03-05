@@ -102,7 +102,7 @@ Also a new addition to the grammar was to add type method which is another task 
 Now maybe the most interesting part is the transtion between a NFA and a DFA. This is one of the longest pieces of code in the file.
 
 ```py
-def toDFA(self) -> DFA:#@Study
+def toDFA(self) -> DFA:
     # Use a sorted list to ensure the key is always identical for the same set
     start_set = frozenset([self.Q0])
     start_name = str(sorted(list(start_set)))
@@ -156,6 +156,13 @@ To test and demo the type feature of the grammar we init 4 different kind of gra
 For each variant we get a grammar and to controll if everything works fine i chose to iterate 1000 times with a new word genereated from this grammar and check if the dfa and nfa can both identify this word if everythings goes right because we generate the grammar from the nfa we should be able to identify the word in both cases.
 
 Lastly with the help of the graphviz we can generate the graph of each varian in the folder graph with the name their indecies. You can disable this behaiviour by setting the constant *GENERATE_GRAPHS* to False if you dont want to install the library or you dont want generate the graphs.
+
+## Variant 10
+
+This is the variant that was assigned the graph convertion:
+
+![Hello](variant10.png)
+
 
 ## Conclusion
 
