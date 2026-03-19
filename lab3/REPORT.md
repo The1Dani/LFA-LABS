@@ -87,6 +87,7 @@ the method you see above is probably the most interesting of them all and its us
 
 ## Conclusion
 
+The lexer/scanner is an important construct to being able to programatically go to trough text. The lexer produces a stream of predefined types of tokens to signify the structure of text.
 In this laboratory work its elaborated a simple lexer for the programming language Scheme Lisp [1]. And learned what a lexer/scanner is.
 
 ## References:
