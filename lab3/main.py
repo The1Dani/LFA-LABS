@@ -1,4 +1,3 @@
-import sys
 from lexer import Lexer
 
 

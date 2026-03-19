@@ -1,4 +1,4 @@
-from Tokens import *
+from Tokens import ReservedToken, Token, TokenKind
 
 
 class Lexer:
