@@ -21,12 +21,12 @@ class Parser:
          | EXPR question | EXPR power
     """
 
-    def ntok(self) -> Token:
+    def _ntok(self) -> Token:
         tok = self.tokens[self.cursor]
         self.cursor += 1
         return tok
     
-    def ptok(self) -> Token:
+    def _ptok(self) -> Token:
         return self.tokens[self.cursor]
 
     def __init__(self, tokens):
@@ -41,14 +41,14 @@ class Parser:
         return self.parseTree
     
     def _parseExpr(self, parent: AST):
-        tok = self.ntok()
+        tok = self._ntok()
 
         #WORD Expr = word
         if tok.kind == TokenKind.WORD:
-            ntok = self.ptok()
+            ntok = self._ptok()
             #TAIL values POWER | QUESTION | STAR | PLUS 
             if ntok.kind in [TokenKind.PLUS, TokenKind.POWER, TokenKind.STAR, TokenKind.QUESTION]:
-                self.ntok()
+                self._ntok()
                 parent.add_leaf(tok, ntok)
             else:
                 parent.add_leaf(tok, None)
@@ -57,27 +57,27 @@ class Parser:
         if tok.kind != TokenKind.LPAR:
             raise ValueError(f"Invalid expr with invalid token = {tok}")
         
-        # ( EXPR (| EXPR)+ )
+        # '(' EXPR (| EXPR)+ ')'
         leaf = parent.add_leaf(Token(TokenKind.OR), None)
         # L_PAR already consumed in the first
         self._parseExpr(leaf)
         self._consume(TokenKind.OR)
         self._parseExpr(leaf)
         
-        while self.ptok().kind == TokenKind.OR:
+        while self._ptok().kind == TokenKind.OR:
             self._consume(TokenKind.OR)
             self._parseExpr(leaf)
         
         self._consume(TokenKind.RPAR)
 
-        ntok = self.ptok()
+        ntok = self._ptok()
         if ntok.kind in [TokenKind.PLUS, TokenKind.POWER, TokenKind.STAR, TokenKind.QUESTION]:
-            self.ntok()
+            self._ntok()
             leaf.OP = ntok
 
 
     def _consume(self, tok_kind):
-        tok = self.ntok()
+        tok = self._ntok()
         if tok.kind != tok_kind:
             raise ValueError(f"Invalid expr with invalid token = {tok}, expected token kind {tok_kind}")
         return tok

@@ -1,13 +1,6 @@
-from dataclasses import dataclass
-from lexer import Token, TokenKind, Lexer
+from lexer import TokenKind, Lexer
 from parser import AST, Parser
 import random
-
-@dataclass
-class Expr:
-    value: Token
-    tail: Token|None
-
 
 class Interpreter:
 
@@ -17,10 +10,10 @@ class Interpreter:
     def interp(self) -> str:
         exprs = ""
         for child in self.ast.childs:
-            exprs += self.reduceAndInterp(child)
+            exprs += self._reduceAndInterp(child)
         return exprs
     
-    def reduceAndInterp(self, child: AST):
+    def _reduceAndInterp(self, child: AST):
         
         result = ""
 
@@ -28,11 +21,12 @@ class Interpreter:
         if child.value.kind == TokenKind.OR:
             res: list[str] = []
             for c in child.childs:
-                res += self.reduceAndInterp(c)
+                res += self._reduceAndInterp(c)
             result = random.choice(res)
+        #Simple Word
         else:
             result = child.value.value
-        #Simple Word
+        
         if child.OP is None:
             return result
         elif child.OP.kind == TokenKind.PLUS:

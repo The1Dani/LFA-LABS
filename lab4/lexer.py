@@ -27,13 +27,13 @@ class Lexer:
         self.source = source
         self.cursor = 0
 
-    def nchar(self):
+    def _nchar(self):
         """Consume next char"""
         char = self.source[self.cursor]
         self.cursor += 1
         return char
 
-    def pchar(self):
+    def _pchar(self):
         """Peek at next char"""
         return self.source[self.cursor]
 
@@ -49,20 +49,20 @@ class Lexer:
                 continue
 
             # Pipe
-            if self.pchar() == "|":
-                self.nchar()
+            if self._pchar() == "|":
+                self._nchar()
                 tokens.append(Token(TokenKind.OR))
                 continue
 
             # Question
-            if self.pchar() == "?":
-                self.nchar()
+            if self._pchar() == "?":
+                self._nchar()
                 tokens.append(Token(TokenKind.QUESTION))
                 continue
 
             # Power | + | *
-            if self.pchar() == "^":
-                self.nchar()
+            if self._pchar() == "^":
+                self._nchar()
                 token = self._lexPPS()
                 if not token:
                     raise ValueError("Wrong Power Token")
@@ -80,7 +80,7 @@ class Lexer:
         return tokens
 
     def _lexPPS(self):
-        char = self.nchar()
+        char = self._nchar()
         if char == "+":
             return Token(TokenKind.PLUS)
         if char == "*":
